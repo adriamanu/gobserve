@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -27,6 +28,8 @@ type commandToExecute struct {
 
 // this slice if filled with globbed files
 var filesToWatch []fileToWatch
+
+var runningProcess *os.Process
 
 // FLAGS
 var configFlag = flag.String("conf", "", "configuration file")
@@ -60,13 +63,33 @@ func parseCmd(commandToParse string) commandToExecute {
 }
 
 func execCmd(c commandToExecute) {
+	if runningProcess != nil {
+		runningProcess.Signal(syscall.SIGKILL)
+		// by using minus operator Kill will send signal to process group id
+		// by doing so it will also kill process childrens
+		err := syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	cmd := exec.Command(c.command, c.args...)
+	// Set the same pgid on childrens
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+
+	// The command will create a child process
+	// If you use Kill() it will kill this process but not his childrens
+	// His childrens will then be sons of INIT (PID 1) which can lead to unwanted scenarios
+	// To prevent that we will kill all his children processes before killing him
+	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	runningProcess = cmd.Process
 }
 
 // FILES
@@ -126,5 +149,6 @@ func main() {
 	declareFilesToWatch(f)
 
 	cmd := parseCmd(*commandFlag)
+	execCmd(cmd)
 	watch(filesToWatch, cmd)
 }
