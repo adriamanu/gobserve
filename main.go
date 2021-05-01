@@ -6,13 +6,13 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"syscall"
-	"time"
 )
 
-// Custom structures
+// STRUCTURES
 type fileToWatch struct {
 	// location of the file
 	filePath string
@@ -26,10 +26,16 @@ type commandToExecute struct {
 	args    []string
 }
 
+// VARS
 // this slice if filled with globbed files
 var filesToWatch []fileToWatch
 
+// currently running sub process
 var runningProcess *os.Process
+
+// colors
+var Reset = "\033[0m"
+var Yellow = "\033[33m"
 
 // FLAGS
 var configFlag = flag.String("conf", "", "configuration file")
@@ -45,6 +51,30 @@ func checkFlags() {
 	if *commandFlag == "" {
 		log.Fatal(fmt.Errorf(errMsg, "-c"))
 	}
+}
+
+// PROCESS MANAGEMENT
+func killRunningProcess() {
+	if runningProcess != nil {
+		runningProcess.Signal(syscall.SIGKILL)
+		// by using minus operator Kill will send signal to process group id
+		// by doing so it will also kill process childrens
+		err := syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+func catchSigTerm() {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Printf(Yellow + "\n\nAnd now my watch is ended\n" + Reset)
+		killRunningProcess()
+		os.Exit(0)
+	}()
 }
 
 // COMMANDS
@@ -63,20 +93,13 @@ func parseCmd(commandToParse string) commandToExecute {
 }
 
 func execCmd(c commandToExecute) {
-	if runningProcess != nil {
-		runningProcess.Signal(syscall.SIGKILL)
-		// by using minus operator Kill will send signal to process group id
-		// by doing so it will also kill process childrens
-		err := syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	killRunningProcess()
 
 	cmd := exec.Command(c.command, c.args...)
 	// Set the same pgid on childrens
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
+	// Redirect command errors and output to standard output and errors
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -95,10 +118,11 @@ func execCmd(c commandToExecute) {
 // FILES
 func retrieveFilesToWatch(pattern string) []string {
 	glob, err := filepath.Glob(pattern)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Watching on", glob)
+	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, glob)
 	return glob
 }
 
@@ -131,17 +155,18 @@ func watch(filesToWatch []fileToWatch, cmd commandToExecute) {
 			originalModificationDate := filesToWatch[i].modificationDate
 			modificationDateToCheck := getFileModificationDate(filesToWatch[i].filePath)
 			if fileHasBeenModified(originalModificationDate, modificationDateToCheck) {
-				fmt.Printf("File %s has been modified\n", filesToWatch[i].filePath)
+				fmt.Printf(Yellow+"File %s has been modified\n"+Reset, filesToWatch[i].filePath)
 				filesToWatch[i].modificationDate = modificationDateToCheck
 				execCmd(cmd)
 			}
 		}
-		// pause for 100 ms
-		time.Sleep(100 * time.Millisecond)
 	}
 }
 
 func main() {
+	catchSigTerm()
+	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death\n\n" + Reset)
+
 	flag.Parse()
 	checkFlags()
 
