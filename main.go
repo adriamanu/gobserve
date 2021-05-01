@@ -27,15 +27,14 @@ type commandToExecute struct {
 }
 
 // VARS
+var Reset = "\033[0m"
+var Yellow = "\033[33m"
+
 // this slice if filled with globbed files
 var filesToWatch []fileToWatch
 
 // currently running sub process
 var runningProcess *os.Process
-
-// colors
-var Reset = "\033[0m"
-var Yellow = "\033[33m"
 
 // FLAGS
 var configFlag = flag.String("conf", "", "configuration file")
@@ -71,7 +70,7 @@ func catchSigTerm() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		fmt.Printf(Yellow + "\n\nAnd now my watch is ended\n" + Reset)
+		fmt.Printf(Yellow + "\n\nAnd now my watch is ended.\n" + Reset)
 		killRunningProcess()
 		os.Exit(0)
 	}()
@@ -96,17 +95,13 @@ func execCmd(c commandToExecute) {
 	killRunningProcess()
 
 	cmd := exec.Command(c.command, c.args...)
-	// Set the same pgid on childrens
+	// set the same pgid on childrens
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
-	// Redirect command errors and output to standard output and errors
+	// redirect command errors and output to standard output and errors
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	// The command will create a child process
-	// If you use Kill() it will kill this process but not his childrens
-	// His childrens will then be sons of INIT (PID 1) which can lead to unwanted scenarios
-	// To prevent that we will kill all his children processes before killing him
 	err := cmd.Start()
 	if err != nil {
 		log.Fatal(err)
@@ -165,7 +160,7 @@ func watch(filesToWatch []fileToWatch, cmd commandToExecute) {
 
 func main() {
 	catchSigTerm()
-	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death\n\n" + Reset)
+	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death.\n\n" + Reset)
 
 	flag.Parse()
 	checkFlags()

@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func Healthcheck(res http.ResponseWriter, req *http.Request) {
+func healthcheck(res http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodGet {
 		getHealthcheck(res, req)
 	} else {
@@ -32,7 +32,7 @@ func main() {
 
 	fmt.Println("Listening on port:" + port)
 
-	http.Handle("/", http.HandlerFunc(Healthcheck))
+	http.Handle("/", http.HandlerFunc(healthcheck))
 
 	err := http.ListenAndServe(port, nil)
 
