@@ -11,7 +11,7 @@ go run main.go -c "go build main.go" -files test.txt
 ```
 
 ```bash
-go run main.go -c "go run test/server.go" -files "test/*.go"
+go run goverwatch.go -c "go run test/server.go" -files "*/*.go"
 ```
 
 ## Processes

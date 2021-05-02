@@ -68,6 +68,7 @@ func killRunningProcess() {
 func catchSigTerm() {
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt, syscall.SIGHUP)
 	go func() {
 		<-c
 		fmt.Printf(Yellow + "\n\nAnd now my watch is ended.\n" + Reset)
@@ -117,7 +118,6 @@ func retrieveFilesToWatch(pattern string) []string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, glob)
 	return glob
 }
 
@@ -160,15 +160,17 @@ func watch(filesToWatch []fileToWatch, cmd commandToExecute) {
 
 func main() {
 	catchSigTerm()
-	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death.\n\n" + Reset)
-
 	flag.Parse()
 	checkFlags()
 
+	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death.\n\n" + Reset)
+
 	f := retrieveFilesToWatch(*filesFlag)
 	declareFilesToWatch(f)
+	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, f)
 
 	cmd := parseCmd(*commandFlag)
+
 	execCmd(cmd)
 	watch(filesToWatch, cmd)
 }
