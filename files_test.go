@@ -33,20 +33,4 @@ func TestDoubleStarPatterns(t *testing.T) {
 			t.Errorf("A .go file hasn't been globbed, check pattern")
 		}
 	})
-
-	t.Run(".git/**/*.sample pattern", func(t *testing.T) {
-		pattern := ".git/**/*.sample"
-		files := globFiles(pattern)
-		if len(files) != 11 {
-			t.Errorf("A .sample file hasn't been globbed")
-		}
-	})
-
-	t.Run("**/**/*.sample pattern", func(t *testing.T) {
-		pattern := "**/**/*.sample"
-		files := globFiles(pattern)
-		if len(files) != 11 {
-			t.Errorf("A .sample file hasn't been globbed")
-		}
-	})
 }
