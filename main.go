@@ -112,13 +112,52 @@ func execCmd(c commandToExecute) {
 }
 
 // FILES
-func retrieveFilesToWatch(pattern string) []string {
-	glob, err := filepath.Glob(pattern)
+func globFiles(pattern string) []string {
+	tokenizedPattern := strings.Split(pattern, "/")
+	patternLen := len(tokenizedPattern)
+	fileExtension := "." + strings.SplitN(tokenizedPattern[len(tokenizedPattern)-1], ".", 2)[1]
 
+	var fp []string
+	err := filepath.Walk(".",
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if strings.Contains(path, fileExtension) {
+				// current path tokenized
+				cp := strings.Split(path, "/")
+				cplen := len(cp)
+
+				// files at root level
+				if cplen == 1 {
+					fp = append(fp, cp[0])
+				}
+
+				if cplen == patternLen {
+					add := false
+					for i := range cp {
+						if (i == cplen-1) && strings.Contains(cp[i], fileExtension) {
+							add = true
+							break
+						}
+						// break if dir pattern is not a double star or it does not match our defined pattern
+						if !(tokenizedPattern[i] == "**") && !(cp[i] == tokenizedPattern[i]) {
+							break
+						}
+					}
+					if add {
+						// if file matched our criteria we add it to files list
+						fp = append(fp, path)
+					}
+				}
+			}
+			return nil
+		})
 	if err != nil {
 		log.Fatal(err)
 	}
-	return glob
+	return fp
 }
 
 // we glob a list of files to watch and pass them to this function
@@ -165,7 +204,7 @@ func main() {
 
 	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death.\n\n" + Reset)
 
-	f := retrieveFilesToWatch(*filesFlag)
+	f := globFiles(*filesFlag)
 	declareFilesToWatch(f)
 	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, f)
 
