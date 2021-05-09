@@ -125,6 +125,15 @@ func globFiles(pattern string) []string {
 			}
 
 			if strings.Contains(path, fileExtension) {
+				fileInfo, err := os.Stat(path)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if fileInfo.Mode().IsDir() {
+					// exclude directories
+					return nil
+				}
+
 				// current path tokenized
 				cp := strings.Split(path, "/")
 				cplen := len(cp)
@@ -132,9 +141,7 @@ func globFiles(pattern string) []string {
 				// files at root level
 				if cplen == 1 {
 					fp = append(fp, cp[0])
-				}
-
-				if cplen == patternLen {
+				} else if cplen == patternLen {
 					add := false
 					for i := range cp {
 						if (i == cplen-1) && strings.Contains(cp[i], fileExtension) {
