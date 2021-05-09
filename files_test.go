@@ -18,8 +18,8 @@ func TestGlobbingPatterns(t *testing.T) {
 		pattern := ".*"
 		files := retrieveFilesToWatch(pattern)
 		for i := range retrieveFilesToWatch(".*") {
-			if !strings.Contains(files[i], ".git") {
-				t.Errorf("dotfiles should only be related to git")
+			if !(strings.Contains(files[i], ".git") || strings.Contains(files[i], ".travis")) {
+				t.Errorf("dotfiles should only be related to git or travis")
 			}
 		}
 	})
