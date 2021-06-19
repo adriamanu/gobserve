@@ -211,9 +211,16 @@ func main() {
 
 	fmt.Printf(Yellow + "And now my watch begins. It shall not end until my death.\n\n" + Reset)
 
-	f := globFiles(*filesFlag)
-	declareFilesToWatch(f)
-	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, f)
+	// allow multiple patterns separated by a space
+	patternsToGlob := strings.Split(*filesFlag, " ")
+	for i := range patternsToGlob {
+		p := patternsToGlob[i]
+		if p != "" {
+			f := globFiles(p)
+			declareFilesToWatch(f)
+			fmt.Printf(Yellow+"watching on %s\n\n"+Reset, f)
+		}
+	}
 
 	cmd := parseCmd(*commandFlag)
 
