@@ -3,6 +3,7 @@
 [![Actions Status](https://github.com/adriamanu/goverwatch/workflows/build/badge.svg)](https://github.com/adriamanu/goverwatch/actions)
 ![Tests](https://github.com/adriamanu/goverwatch/actions/workflows/test.yml/badge.svg)
 [![codecov](https://codecov.io/gh/adriamanu/goverwatchbranch/master/graph/badge.svg)](https://codecov.io/gh/adriamanu/goverwatch)
+
 ## Golang file watcher
 
 Specify a command to execute and a list of files to watch on.<br>
