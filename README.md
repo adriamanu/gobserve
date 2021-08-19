@@ -1,8 +1,7 @@
 # Goverwatch
 
-[![Actions Status](https://github.com/adriamanu/goverwatch/workflows/build/badge.svg)](https://github.com/adriamanu/goverwatch/actions)
-![Tests](https://github.com/adriamanu/goverwatch/actions/workflows/test.yml/badge.svg)
-[![codecov](https://codecov.io/gh/adriamanu/goverwatchbranch/master/graph/badge.svg)](https://codecov.io/gh/adriamanu/goverwatch)
+[![Actions Status](https://github.com/adriamanu/goverwatch/actions/workflows/test.yml/badge.svg)](https://github.com/adriamanu/goverwatch/actions)
+[![codecov](https://codecov.io/gh/adriamanu/goverwatch/master/graph/badge.svg)](https://codecov.io/gh/adriamanu/goverwatch)
 
 ## Golang file watcher
 
