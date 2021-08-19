@@ -221,6 +221,34 @@ func watch(filesToWatch []fileToWatch, cmd commandToExecute) {
 	}
 }
 
+func shouldKeepFile(fileToKeep string, existingFiles []string) bool {
+	for _, f := range existingFiles {
+		if f == fileToKeep {
+			return false
+		}
+	}
+	return true
+}
+
+func removeGlobDuplicates(f [][]string) []string {
+	var filesToKeep []string
+	if len(f) > 0 {
+		filesToKeep = f[0]
+	} else {
+		return filesToKeep
+	}
+
+	for i := 1; i < len(f); i++ {
+		for j := 0; j < len(f[i]); j++ {
+			if shouldKeepFile(f[i][j], filesToKeep) {
+				filesToKeep = append(filesToKeep, f[i][j])
+			}
+		}
+	}
+
+	return filesToKeep
+}
+
 func main() {
 	catchSigTerm()
 	flag.Parse()
@@ -230,14 +258,17 @@ func main() {
 
 	// allow multiple patterns separated by a space
 	patternsToGlob := strings.Split(*filesFlag, " ")
+	var filesToGlob [][]string
 	for i := range patternsToGlob {
 		p := patternsToGlob[i]
 		if p != "" {
-			f := globFiles(p)
-			declareFilesToWatch(f)
-			fmt.Printf(Yellow+"watching on %s\n\n"+Reset, f)
+			filesToGlob = append(filesToGlob, globFiles(p))
 		}
 	}
+
+	files := removeGlobDuplicates(filesToGlob)
+	declareFilesToWatch(files)
+	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, files)
 
 	cmd := parseCmd(*commandFlag)
 
