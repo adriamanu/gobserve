@@ -41,8 +41,8 @@ func TestDoubleStarPatterns(t *testing.T) {
 func TestMultiplePatterns(t *testing.T) {
 	t.Run("*.go and *.yml pattern", func(t *testing.T) {
 		var filesCount int
-		// file_test.go main.go .travis.yml
-		expression := "*.go *.yml"
+		// file_test.go main.go .github/workflows/go.yml
+		expression := "*.go **/**/.yml"
 		patterns := strings.Split(expression, " ")
 		for i := range patterns {
 			files := globFiles(patterns[i])
