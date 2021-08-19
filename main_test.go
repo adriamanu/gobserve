@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 )
@@ -34,7 +33,6 @@ func TestDoubleStarPatterns(t *testing.T) {
 		// [files_test.go main.go samples/a/a.go samples/a/a2.go samples/b/b.go]
 		pattern := "**/**/*.go"
 		files := globFiles(pattern)
-		fmt.Println("3 lvl files=", files)
 		if len(files) != 5 {
 			t.Errorf("A .go file hasn't been globbed when pattern is 3 level nested")
 		}
@@ -48,7 +46,6 @@ func TestDoubleStarPatterns(t *testing.T) {
 		// samples/a/aa/aaa/aaa.go samples/a/aa/aaa/aaa2.go
 		pattern := "**/**/**/**/*.go"
 		files := globFiles(pattern)
-		fmt.Println("5 lvl files=", files)
 		if len(files) != 11 {
 			t.Errorf("A .go file hasn't been globbed when pattern is 5 level nested")
 		}
@@ -63,7 +60,6 @@ func TestMultiplePatternsWithWildcardPattern(t *testing.T) {
 		patterns := strings.Split(expression, " ")
 		for i := range patterns {
 			files := globFiles(patterns[i])
-			fmt.Println("files", files)
 			filesCount += len(files)
 		}
 		if filesCount != 4 {
