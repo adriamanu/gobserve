@@ -1,4 +1,4 @@
-name: Run unit tests for goverwatch project
+name: Tests
 on:
   push:
     branches: [main, feature/*]
