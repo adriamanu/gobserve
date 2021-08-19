@@ -1,4 +1,6 @@
 # Goverwatch
+
+![goverwatch workflow](https://github.com/adriamanu/goverwatch/actions/workflows/go.yml/badge.svg)
 ## Golang file watcher
 
 Specify a command to execute and a list of files to watch on.<br>
