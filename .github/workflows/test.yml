@@ -1,0 +1,27 @@
+name: goverwatch flow
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.13
+
+      - name: Test
+        run: go test -v --covermode=count --coverprofile=./coverage/coverage.out .
+
+      - name: Codecov
+        uses: codecov/codecov-action@v2.0.2
+        with:
+          files: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
+          path_to_write_report: ./coverage/codecov_report.txt
