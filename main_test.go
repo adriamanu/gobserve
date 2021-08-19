@@ -78,7 +78,7 @@ func TestMultiplePatternsWithoutWildcardPattern(t *testing.T) {
 			files := globFiles(patterns[i])
 			filesCount += len(files)
 		}
-		if filesCount != 3 {
+		if filesCount != 2 {
 			t.Errorf("A file matching *.go or *.yml hasn't been globbed")
 		}
 	})
