@@ -9,3 +9,4 @@ COPY main.go .
 
 RUN GOOS=linux GOARCH=amd64 go build -o goverwatch
 
+ENTRYPOINT [ "/go/goverwatch/goverwatch" ]
