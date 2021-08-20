@@ -1,21 +1,23 @@
-# Goverwatch
-
 [![Actions Status](https://github.com/adriamanu/goverwatch/actions/workflows/test.yml/badge.svg)](https://github.com/adriamanu/goverwatch/actions)
 [![codecov](https://codecov.io/gh/adriamanu/goverwatch/master/graph/badge.svg)](https://codecov.io/gh/adriamanu/goverwatch)
 
-## Golang file watcher
+# Golang file watcher
 
-Specify a command to execute and a list of files to watch on.<br>
-If one of the file is modified, your command will be re-executed.<br>
-It is useful in a development environment to have hot reloading.
+## What is Goverwatch
+It is useful in any development environment to have a hot-reloading system.<br>
+Govewatch is a file watcher that will lookup for modifications on a bunch of files and execute a command whenever a file is modified.<br>
+Specify a **command** to execute and a list of files to watch on and you are ready to go.<br>
 
+## Usage 
+| Supported flags |                                          Description                                          | Mandatory |
+| :-------------: | :-------------------------------------------------------------------------------------------: | :-------: |
+|      files      | string separated by spaces with files you want to look on <br> * && ** patterns are supported |    yes    |
+|        c        |                         command to execute wrapped with double quotes                         |    yes    |
+|     ignore      | string separated by spaces with files you want to look on <br> * && ** patterns are supported |    no     |
+
+Here is an example:
 ```bash
-echo "trigger watcher" > test.txt
-go run main.go -c "go build main.go" -files test.txt
-```
-
-```bash
-go run goverwatch.go -c "go run test/server.go" -files "*/*.go"
+goverwatch -files "**/**/**/**/**.go **/**/**/*.json *.go" -c "go build main.go" -ignore "samples/b/b.json *.go""
 ```
 
 ## Processes
@@ -31,4 +33,9 @@ cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 We can then kill every process in the group by passing a negative integer to the `Kill()` function.<br>
 ```go
 syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
+```
+
+## Download
+```bash
+curl -L -s https://github.com/adriamanu/goverwatch/releases/download/v0.1.0-alpha/goverwatch  --output goverwatch && chmod +x goverwatch
 ```
