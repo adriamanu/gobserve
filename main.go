@@ -238,6 +238,7 @@ func removeGlobDuplicates(f [][]string) []string {
 		return filesToKeep
 	}
 
+	// don't keep duplicates - some files may match several patterns
 	for i := 1; i < len(f); i++ {
 		for j := 0; j < len(f[i]); j++ {
 			if shouldKeepFile(f[i][j], filesToKeep) {
@@ -247,6 +248,28 @@ func removeGlobDuplicates(f [][]string) []string {
 	}
 
 	return filesToKeep
+}
+
+func remove(s []string, i int) []string {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
+func removeFileFromList(files *[]string, file string) {
+	for i, f := range *files {
+		if f == file {
+			*files = remove(*files, i)
+		}
+	}
+	return
+}
+
+func removeIgnoredFiles(filesToKeep *[]string, filesToIgnore []string) {
+	for i := 0; i < len(filesToIgnore); i++ {
+		if !shouldKeepFile(filesToIgnore[i], *filesToKeep) {
+			removeFileFromList(filesToKeep, filesToIgnore[i])
+		}
+	}
 }
 
 func main() {
@@ -266,7 +289,18 @@ func main() {
 		}
 	}
 
+	var filesToIgnore [][]string
+	patternsToIgnore := strings.Split(*ignoreFlag, " ")
+	for j := range patternsToIgnore {
+		pi := patternsToIgnore[j]
+		if pi != "" {
+			filesToIgnore = append(filesToIgnore, globFiles((pi)))
+		}
+	}
+
 	files := removeGlobDuplicates(filesToGlob)
+	ignoredFiles := removeGlobDuplicates(filesToIgnore)
+	removeIgnoredFiles(&files, ignoredFiles)
 	declareFilesToWatch(files)
 	fmt.Printf(Yellow+"watching on %s\n\n"+Reset, files)
 
