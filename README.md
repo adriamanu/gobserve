@@ -9,11 +9,11 @@ Govewatch is a file watcher that will lookup for modifications on a bunch of fil
 Specify a **command** to execute and a list of files to watch on and you are ready to go.<br>
 
 ## Usage 
-| Supported flags |                                          Description                                          | Mandatory |
-| :-------------: | :-------------------------------------------------------------------------------------------: | :-------: |
-|      files      | string separated by spaces with files you want to look on <br> * && ** patterns are supported |    yes    |
-|        c        |                         command to execute wrapped with double quotes                         |    yes    |
-|     ignore      | string separated by spaces with files you want to look on <br> * && ** patterns are supported |    no     |
+| Supported flags |                                    Description                                    | Mandatory |
+| :-------------: | :-------------------------------------------------------------------------------: | :-------: |
+|      files      | files separated by spaces you want to look on <br> * && ** patterns are supported |    yes    |
+|        c        |                   command to execute wrapped with double quotes                   |    yes    |
+|     ignore      | files separated by spaces you want to ignore <br> * && ** patterns are supported  |    no     |
 
 Here is an example:
 ```bash
