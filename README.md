@@ -17,7 +17,7 @@ Specify a **command** to execute and a list of files to watch on and you are rea
 
 Here is an example:
 ```bash
-goverwatch -files "**/**/**/**/**.go **/**/**/*.json *.go" -c "go build main.go" -ignore "samples/b/b.json *.go""
+goverwatch -files "**/**/**/**/**.go **/**/**/*.json *.go" -c "go build main.go" -ignore "_samples/b/b.json *.go""
 ```
 
 ## Processes
