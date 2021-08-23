@@ -8,7 +8,7 @@ import (
 )
 
 func isPatternAWildcard(pattern string) bool {
-	if len(pattern) > 0 && pattern[:1] == "*" {
+	if len(pattern) > 0 && (pattern[:2] == "**" || pattern[:2] == "*.") {
 		return true
 	}
 	return false
@@ -26,7 +26,13 @@ func GlobFiles(pattern string) []string {
 	if isPatternAWildcard(tokenizedPattern[len(tokenizedPattern)-1]) {
 		lookupPattern = "." + strings.SplitN(tokenizedPattern[len(tokenizedPattern)-1], ".", 2)[1]
 	} else {
-		lookupPattern = tokenizedPattern[len(tokenizedPattern)-1]
+		lastToken := tokenizedPattern[len(tokenizedPattern)-1]
+		// pattern may contains a single star
+		if lastToken[:1] == "*" {
+			lookupPattern = lastToken[1:]
+		} else {
+			lookupPattern = lastToken
+		}
 	}
 
 	var fp []string
