@@ -44,16 +44,20 @@ func fileHasBeenModified(originalModificationDate, modificationDate int64) bool 
 	return false
 }
 
+func executeCommandOnFileModification(cmd commands.CommandToExecute, files []fileToWatch) {
+	for _, file := range filesToWatch {
+		originalModificationDate := file.modificationDate
+		modificationDateToCheck := getFileModificationDate(file.filePath)
+		if fileHasBeenModified(originalModificationDate, modificationDateToCheck) {
+			fmt.Printf(colors.Yellow+"File %s has been modified\n"+colors.Reset, file.filePath)
+			file.modificationDate = modificationDateToCheck
+			commands.ExecCmd(cmd)
+		}
+	}
+}
+
 func Watch(cmd commands.CommandToExecute) {
 	for {
-		for i := range filesToWatch {
-			originalModificationDate := filesToWatch[i].modificationDate
-			modificationDateToCheck := getFileModificationDate(filesToWatch[i].filePath)
-			if fileHasBeenModified(originalModificationDate, modificationDateToCheck) {
-				fmt.Printf(colors.Yellow+"File %s has been modified\n"+colors.Reset, filesToWatch[i].filePath)
-				filesToWatch[i].modificationDate = modificationDateToCheck
-				commands.ExecCmd(cmd)
-			}
-		}
+		executeCommandOnFileModification(cmd, filesToWatch)
 	}
 }

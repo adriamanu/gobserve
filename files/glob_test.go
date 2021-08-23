@@ -7,10 +7,10 @@ import (
 
 func TestSimplePatterns(t *testing.T) {
 	t.Run("*.go pattern", func(t *testing.T) {
-		// glob_test.go glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go
+		// glob_test.go glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go watcher_test.go
 		pattern := "*.go"
 		files := GlobFiles(pattern)
-		if len(files) != 5 {
+		if len(files) != 6 {
 			t.Errorf("A .go file hasn't been globbed, check pattern")
 		}
 	})
@@ -30,10 +30,10 @@ func TestSimplePatterns(t *testing.T) {
 func TestDoubleStarPatterns(t *testing.T) {
 	t.Run("3 level nested double star pattern", func(t *testing.T) {
 		// _samples/a/a.go _samples/a/a2.go _samples/b/b.go
-		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go
+		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go watcher_test.go
 		pattern := "**/**/*.go"
 		files := GlobFiles(pattern)
-		if len(files) != 8 {
+		if len(files) != 9 {
 			t.Errorf("A .go file hasn't been globbed when pattern is 3 level nested")
 		}
 	})
@@ -42,10 +42,10 @@ func TestDoubleStarPatterns(t *testing.T) {
 		// _samples/a/a.go _samples/a/a2.go _samples/b/b.go
 		// _samples/a/aa/aa.go _samples/a/aa/aa2.go _samples/b/ba/ba.go _samples/b/ba/ba2.go
 		// _samples/a/aa/aaa/aaa.go _samples/a/aa/aaa/aaa2.go
-		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go
+		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go watcher_test.go
 		pattern := "**/**/**/**/*.go"
 		files := GlobFiles(pattern)
-		if len(files) != 14 {
+		if len(files) != 15 {
 			t.Errorf("A .go file hasn't been globbed when pattern is 5 level nested")
 		}
 	})
@@ -55,14 +55,14 @@ func TestMultiplePatternsWithWildcardPattern(t *testing.T) {
 	t.Run("*.go and *.yml pattern", func(t *testing.T) {
 		var filesCount int
 		// _samples/b/b.yml
-		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go
+		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go watcher_test.go
 		expression := "*.go **/**/*.yml"
 		patterns := strings.Split(expression, " ")
 		for i := range patterns {
 			files := GlobFiles(patterns[i])
 			filesCount += len(files)
 		}
-		if filesCount != 6 {
+		if filesCount != 7 {
 			t.Errorf("A file matching *.go or *.yml hasn't been globbed")
 		}
 	})
@@ -71,14 +71,14 @@ func TestMultiplePatternsWithWildcardPattern(t *testing.T) {
 func TestMultiplePatternsWithoutWildcardPattern(t *testing.T) {
 	t.Run("*.go and go.yml pattern", func(t *testing.T) {
 		var filesCount int
-		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go
+		// glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go files_test.go watcher_test.go
 		expression := "*.go **/**/go.yml"
 		patterns := strings.Split(expression, " ")
 		for i := range patterns {
 			files := GlobFiles(patterns[i])
 			filesCount += len(files)
 		}
-		if filesCount != 5 {
+		if filesCount != 6 {
 			t.Errorf("A file matching *.go or *.yml hasn't been globbed")
 		}
 	})
