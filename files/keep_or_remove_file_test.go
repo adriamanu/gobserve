@@ -16,7 +16,7 @@ func TestRemoveFromList(t *testing.T) {
 			RemoveFileFromList(&files, file)
 		}
 		if !(len(files) == amountOfFilesBeforeRemoving-len(filesToRemove)) {
-			t.Errorf("amount of files should have been decreased by one.")
+			t.Errorf("Amount of files should have been decreased by one.")
 		}
 	})
 
@@ -30,7 +30,7 @@ func TestRemoveIgnoreFiles(t *testing.T) {
 		amountOfIgnoredFiles := len(filesToIgnore)
 		RemoveIgnoredFiles(&files, filesToIgnore)
 		if !(len(files) == amountOfFilesBeforeRemoving-amountOfIgnoredFiles) {
-			t.Errorf("amount of files should have been decreased by %d.", amountOfIgnoredFiles)
+			t.Errorf("Amount of files should have been decreased by %d.", amountOfIgnoredFiles)
 		}
 	})
 }
@@ -44,6 +44,6 @@ func TestRemoveDuplicatedFiles(t *testing.T) {
 	cleanedFilesList := RemoveGlobDuplicates(allFiles)
 	// files is a superset of somemorefiles as it contains the same files + some from other directories
 	if len(cleanedFilesList) != len(files) {
-		t.Errorf("some files haven't been ignored.")
+		t.Errorf("Some files haven't been ignored.")
 	}
 }
