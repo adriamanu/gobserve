@@ -1,6 +1,8 @@
 package files
 
-import "goverwatch/helpers"
+import (
+	"goverwatch/helpers"
+)
 
 func ShouldKeepFile(fileToKeep string, existingFiles []string) bool {
 	for _, f := range existingFiles {

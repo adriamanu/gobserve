@@ -4,13 +4,14 @@ import (
 	"testing"
 )
 
-var pattern string = "**/**/*.go"
+var nestedPattern string = "**/**/*.go"
+var simplePattern string = "*.go"
 
 func TestRemoveFromList(t *testing.T) {
-	files := GlobFiles(pattern)
+	files := GlobFiles(nestedPattern)
 	t.Run("Remove file from list", func(t *testing.T) {
 		amountOfFilesBeforeRemoving := len(files)
-		filesToRemove := GlobFiles("*.go")
+		filesToRemove := GlobFiles(simplePattern)
 		for _, file := range filesToRemove {
 			RemoveFileFromList(&files, file)
 		}
@@ -22,7 +23,7 @@ func TestRemoveFromList(t *testing.T) {
 }
 
 func TestRemoveIgnoreFiles(t *testing.T) {
-	files := GlobFiles(pattern)
+	files := GlobFiles(nestedPattern)
 	t.Run("Remove ignored files", func(t *testing.T) {
 		amountOfFilesBeforeRemoving := len(files)
 		filesToIgnore := GlobFiles("*_test.go")
@@ -32,4 +33,17 @@ func TestRemoveIgnoreFiles(t *testing.T) {
 			t.Errorf("amount of files should have been decreased by %d.", amountOfIgnoredFiles)
 		}
 	})
+}
+
+func TestRemoveDuplicatedFiles(t *testing.T) {
+	allFiles := [][]string{}
+	files := GlobFiles(nestedPattern)
+	someMoreFiles := GlobFiles(simplePattern)
+	allFiles = append(allFiles, files, someMoreFiles)
+
+	cleanedFilesList := RemoveGlobDuplicates(allFiles)
+	// files is a superset of somemorefiles as it contains the same files + some from other directories
+	if len(cleanedFilesList) != len(files) {
+		t.Errorf("some files haven't been ignored.")
+	}
 }
