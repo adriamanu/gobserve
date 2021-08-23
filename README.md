@@ -37,5 +37,5 @@ syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
 
 ## Download
 ```bash
-curl -L -s https://github.com/adriamanu/goverwatch/releases/download/1.0.0/goverwatch  --output goverwatch && chmod +x goverwatch
+curl -L -s https://github.com/adriamanu/goverwatch/releases/download/latest/goverwatch  --output goverwatch && chmod +x goverwatch
 ```
