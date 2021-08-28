@@ -6,10 +6,15 @@ import (
 	"log"
 )
 
-var ConfigFlag = flag.String("config", "", "configuration file in json or yaml format")
-var FilesFlag = flag.String("files", "", "files to watch")
-var CommandFlag = flag.String("c", "", "command to execute")
-var IgnoreFlag = flag.String("ignore", "", "regex of files to ignore")
+const config string = "config"
+const files string = "files"
+const ignore string = "ignore"
+const command string = "c"
+
+var ConfigFlag = flag.String(config, "", "configuration file in json or yaml format")
+var FilesFlag = flag.String(files, "", "files to watch")
+var CommandFlag = flag.String(command, "", "command to execute")
+var IgnoreFlag = flag.String(ignore, "", "regex of files to ignore")
 
 func CheckFlags() {
 	flag.Parse()
@@ -19,24 +24,22 @@ func CheckFlags() {
 	if *ConfigFlag == "" {
 		// if config flag is not used we use other flags
 		if *FilesFlag == "" {
-			log.Fatal(fmt.Errorf(errMsg, "-files"))
+			log.Fatal(fmt.Errorf(errMsg, files))
 		}
 		if *CommandFlag == "" {
-			log.Fatal(fmt.Errorf(errMsg, "-c"))
+			log.Fatal(fmt.Errorf(errMsg, command))
 		}
 	} else {
 		// if config flag is used we disable other flags
-		if *FilesFlag != "" {
-			fmt.Println("-files flag has been ignored due to configuration file")
-			*FilesFlag = ""
-		}
-		if *CommandFlag != "" {
-			fmt.Println("-c flag has been ignored due to configuration file")
-			*CommandFlag = ""
-		}
-		if *IgnoreFlag != "" {
-			fmt.Println("-ignore flag has been ignored due to configuration file")
-			*IgnoreFlag = ""
-		}
+		excludeFlag(FilesFlag, files)
+		excludeFlag(CommandFlag, command)
+		excludeFlag(IgnoreFlag, ignore)
+	}
+}
+
+func excludeFlag(f *string, flagName string) {
+	if *f != "" {
+		fmt.Printf("flag -%s has been ignored due to configuration file\n", flagName)
+		*f = ""
 	}
 }

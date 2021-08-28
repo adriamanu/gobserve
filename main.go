@@ -26,7 +26,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		conf := config.ParseConfigFile(absolutePath)
+		conf, err := config.ParseConfigFile(absolutePath)
+		if err != nil {
+			log.Fatal(err)
+		}
 		patternsToGlob = conf.Files
 		patternsToIgnore = conf.IgnoredFiles
 		command = conf.Command

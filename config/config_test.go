@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"goverwatch/helpers"
 	"log"
 	"path/filepath"
@@ -13,6 +14,12 @@ func TestConfigurationParsing(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		ext, err := getConfigFileExtension(absolutePath)
+		if errors.Is(err, extensionErr) && ext != ".yaml" {
+			t.Errorf("extension should be yaml")
+		}
+
 		testConfig(absolutePath, t)
 	})
 
@@ -21,12 +28,33 @@ func TestConfigurationParsing(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		ext, err := getConfigFileExtension(absolutePath)
+		if errors.Is(err, extensionErr) && ext != ".json" {
+			t.Errorf("extension should be json")
+		}
+
 		testConfig(absolutePath, t)
+	})
+
+	t.Run("test unexpected config format", func(t *testing.T) {
+		absolutePath, err := filepath.Abs("./config.go")
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, err = getConfigFileExtension(absolutePath)
+
+		if !errors.Is(err, extensionErr) {
+			t.Errorf("should raise an error while retrieving an extension that is not yaml nor json")
+		}
 	})
 }
 
 func testConfig(absolutePath string, t *testing.T) {
-	conf := ParseConfigFile(absolutePath)
+	conf, err := ParseConfigFile(absolutePath)
+	if err != nil {
+		t.Error(err)
+	}
 	patternsToGlob := conf.Files
 	patternsToIgnore := conf.IgnoredFiles
 	command := conf.Command
