@@ -56,17 +56,11 @@ func main() {
 	ignoredFiles := files.RemoveGlobDuplicates(filesToIgnore)
 	files.RemoveIgnoredFiles(&f, ignoredFiles)
 
-	fmt.Println("patternsToGlob", patternsToGlob)
-	fmt.Println("patternsToIgnore", patternsToIgnore)
-	fmt.Println("command", command)
-
 	fmt.Printf(colors.Yellow + "And now my watch begins. It shall not end until my death.\n\n" + colors.Reset)
 	files.DeclareFilesToWatch(f)
 	fmt.Printf(colors.Yellow+"watching on %s\n\n"+colors.Reset, f)
 
 	cmd := commands.ParseCmd(command)
-
-	fmt.Println("CMD", cmd)
 	commands.ExecCmd(cmd)
 	files.Watch(cmd)
 }

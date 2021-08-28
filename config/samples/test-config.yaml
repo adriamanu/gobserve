@@ -4,6 +4,6 @@ files:
   - "**/**.go"
   - "**/**/**.go"
 command: "go build"
-ignoredFiles":
+ignoredFiles:
   - "**/a*.go"
   - "**/**/b*.go"

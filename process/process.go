@@ -30,7 +30,7 @@ func CatchSigTerm() {
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP)
 	go func() {
 		<-c
-		fmt.Printf(colors.Yellow + "\n\nAnd now my watch is ended.\n" + colors.Reset)
+		fmt.Printf(colors.Yellow + "\n\nAnd now my watch is over.\n" + colors.Reset)
 		KillRunningProcess()
 		os.Exit(0)
 	}()
