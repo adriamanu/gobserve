@@ -1,0 +1,8 @@
+.github
+**/*_test.go
+**/_samples
+goverwatch
+README.md
+coverage.out
+.gitignore
+LICENSE

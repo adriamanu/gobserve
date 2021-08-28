@@ -10,7 +10,7 @@ import (
 
 func TestConfigurationParsing(t *testing.T) {
 	t.Run("test yaml configuration", func(t *testing.T) {
-		absolutePath, err := filepath.Abs("./samples/test-config.yaml")
+		absolutePath, err := filepath.Abs("./_samples/test-config.yaml")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -24,7 +24,7 @@ func TestConfigurationParsing(t *testing.T) {
 	})
 
 	t.Run("test json configuration", func(t *testing.T) {
-		absolutePath, err := filepath.Abs("./samples/test-config.json")
+		absolutePath, err := filepath.Abs("./_samples/test-config.json")
 		if err != nil {
 			log.Fatal(err)
 		}
