@@ -1,0 +1,13 @@
+{
+    "files": [
+        "*.go",
+        "**/**.go",
+        "**/**.go",
+        "**/**/**.go"
+    ],
+    "command": "go build",
+    "ignoredFiles": [
+        "**/a*.go",
+        "**/**/b*.go"
+    ]
+}

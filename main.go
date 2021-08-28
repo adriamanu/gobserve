@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"goverwatch/colors"
 	"goverwatch/commands"
+	"goverwatch/config"
 	"goverwatch/files"
 	"goverwatch/flags"
 	"goverwatch/process"
+	"log"
+	"path/filepath"
 	"strings"
 )
 
@@ -14,10 +17,28 @@ func main() {
 	process.CatchSigTerm()
 	flags.CheckFlags()
 
-	fmt.Printf(colors.Yellow + "And now my watch begins. It shall not end until my death.\n\n" + colors.Reset)
+	var patternsToGlob []string
+	var patternsToIgnore []string
+	var command string
 
-	// allow multiple patterns separated by a space
-	patternsToGlob := strings.Split(*flags.FilesFlag, " ")
+	if *flags.ConfigFlag != "" {
+		absolutePath, err := filepath.Abs(*flags.ConfigFlag)
+		if err != nil {
+			log.Fatal(err)
+		}
+		conf, err := config.ParseConfigFile(absolutePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		patternsToGlob = conf.Files
+		patternsToIgnore = conf.IgnoredFiles
+		command = conf.Command
+	} else {
+		patternsToGlob = strings.Split(*flags.FilesFlag, " ")
+		patternsToIgnore = strings.Split(*flags.IgnoreFlag, " ")
+		command = *flags.CommandFlag
+	}
+
 	var filesToGlob [][]string
 	for i := range patternsToGlob {
 		p := patternsToGlob[i]
@@ -27,7 +48,6 @@ func main() {
 	}
 
 	var filesToIgnore [][]string
-	patternsToIgnore := strings.Split(*flags.IgnoreFlag, " ")
 	for j := range patternsToIgnore {
 		pi := patternsToIgnore[j]
 		if pi != "" {
@@ -38,11 +58,12 @@ func main() {
 	f := files.RemoveGlobDuplicates(filesToGlob)
 	ignoredFiles := files.RemoveGlobDuplicates(filesToIgnore)
 	files.RemoveIgnoredFiles(&f, ignoredFiles)
+
+	fmt.Printf(colors.Yellow + "And now my watch begins. It shall not end until my death.\n\n" + colors.Reset)
 	files.DeclareFilesToWatch(f)
 	fmt.Printf(colors.Yellow+"watching on %s\n\n"+colors.Reset, f)
 
-	cmd := commands.ParseCmd(*flags.CommandFlag)
-
+	cmd := commands.ParseCmd(command)
 	commands.ExecCmd(cmd)
 	files.Watch(cmd)
 }
