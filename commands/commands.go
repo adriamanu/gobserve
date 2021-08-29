@@ -14,20 +14,24 @@ type CommandToExecute struct {
 	args    []string
 }
 
+// ParseCmd extract command and args from the provided string in a format used by 'Command' function from 'exec' package.
 func ParseCmd(commandToParse string) CommandToExecute {
 	tokenizedCommand := strings.Split(commandToParse, " ")
 	amountOfToken := len(tokenizedCommand)
-	cmd := tokenizedCommand[0]
 
+	cmd := tokenizedCommand[0]
 	args := []string{}
+
 	if amountOfToken > 1 {
 		for i := 1; i < amountOfToken; i++ {
 			args = append(args, tokenizedCommand[i])
 		}
 	}
+
 	return CommandToExecute{cmd, args}
 }
 
+// ExecCmd execute the command and handle process.
 func ExecCmd(c CommandToExecute) {
 	process.KillRunningProcess()
 

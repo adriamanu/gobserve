@@ -16,6 +16,7 @@ var FilesFlag = flag.String(files, "", "files to watch")
 var CommandFlag = flag.String(command, "", "command to execute")
 var IgnoreFlag = flag.String(ignore, "", "regex of files to ignore")
 
+// CheckFlags parse flags used with the cli and exit with an error message if a mandatory flag is missing.
 func CheckFlags() {
 	flag.Parse()
 
@@ -31,15 +32,16 @@ func CheckFlags() {
 		}
 	} else {
 		// if config flag is used we disable other flags
-		excludeFlag(FilesFlag, files)
-		excludeFlag(CommandFlag, command)
-		excludeFlag(IgnoreFlag, ignore)
+		disableFlag(FilesFlag, files)
+		disableFlag(CommandFlag, command)
+		disableFlag(IgnoreFlag, ignore)
 	}
 }
 
-func excludeFlag(f *string, flagName string) {
+// disableFlag disable flag when the flag -config is passed to the program.
+func disableFlag(f *string, flagName string) {
 	if *f != "" {
-		fmt.Printf("flag -%s has been ignored due to configuration file\n", flagName)
+		fmt.Printf("flag -%s has been disabled due to configuration file\n", flagName)
 		*f = ""
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// isPatternAWildcard returns a boolen if the pattern provided is a wildcard.
 func isPatternAWildcard(pattern string) bool {
 	if len(pattern) > 0 && (pattern[:2] == "**" || pattern[:2] == "*.") {
 		return true
@@ -14,6 +15,8 @@ func isPatternAWildcard(pattern string) bool {
 	return false
 }
 
+// GlobFiles returns all the files that match a pattern.
+// * and ** patterns are handled.
 func GlobFiles(pattern string) []string {
 	tokenizedPattern := strings.Split(pattern, "/")
 	patternLen := len(tokenizedPattern)

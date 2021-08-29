@@ -12,6 +12,7 @@ import (
 // currently running sub process
 var RunningProcess *os.Process
 
+// KillRunningProcess send a Kill signal to children process
 func KillRunningProcess() {
 	if RunningProcess != nil {
 		RunningProcess.Signal(syscall.SIGKILL)
@@ -24,7 +25,8 @@ func KillRunningProcess() {
 	}
 }
 
-func CatchSigTerm() {
+// CatchSignalsAndExit catch kill and terminal closing signals and clean exit the program
+func CatchSignalsAndExit() {
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	signal.Notify(c, os.Interrupt, syscall.SIGHUP)

@@ -21,6 +21,7 @@ var extensionErr error = errors.New("configuration file must be in json or yaml 
 var commandMissingErr error = errors.New("command is a string and must be provided in the configuration file")
 var filesMissingError error = errors.New("files is an array of string and must be provided in the configuration file")
 
+// getConfigFileExtension returns the extension of the config file if this format is handled by the program.
 func getConfigFileExtension(fp string) (ext string, err error) {
 	ext = filepath.Ext(fp)
 	if ext != ".json" && ext != ".yaml" && ext != ".yml" {
@@ -29,6 +30,9 @@ func getConfigFileExtension(fp string) (ext string, err error) {
 	return ext, nil
 }
 
+// ParseConfigFile take the filepath as a parameter.
+// If this file exists and his extension is supported
+// the file is parsed and the Config is returned.
 func ParseConfigFile(fp string) (conf Config, err error) {
 	ext, err := getConfigFileExtension(fp)
 	if err != nil {
@@ -62,5 +66,6 @@ func ParseConfigFile(fp string) (conf Config, err error) {
 	if len(conf.Files) <= 0 {
 		return Config{}, filesMissingError
 	}
+
 	return conf, nil
 }

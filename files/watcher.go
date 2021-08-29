@@ -9,25 +9,26 @@ import (
 )
 
 type fileToWatch struct {
-	// location of the file
+	// filePath is the location of the file.
 	filePath string
-	// last time the file has been modified
-	// if this value change the watcher will trigger a custom command
+	// modificationDate is the last time this file has been modified.
+	// if this value change the watcher will trigger a custom command.
 	modificationDate int64
 }
 
-// this slice if filled with globbed files
+// filesToWatch is a slice filled with globbed files
 var filesToWatch []fileToWatch
 
-// we glob a list of files to watch and pass them to this function
-// it add to our slice
+// DeclareFilesToWatch takes a list of files and add them to the global variable 'filesToWatch'
+// with the filepath and the last modification date.
 func DeclareFilesToWatch(files []string) {
 	for i := range files {
 		filesToWatch = append(filesToWatch, fileToWatch{files[i], getFileModificationDate(files[i])})
 	}
 }
 
-// retrieve last modification date of a file
+// getFileModificationDate retrieve last modification date of a file thanks to 'Stat' function
+// from 'os' package and returns an unix timestamp.
 func getFileModificationDate(filePath string) int64 {
 	fileInfo, err := os.Stat(filePath)
 	if err != nil {
@@ -36,7 +37,8 @@ func getFileModificationDate(filePath string) int64 {
 	return fileInfo.ModTime().UnixNano()
 }
 
-// compare the date with our original one
+// fileHasBeenModified compare the modified date with the original one.
+// true is returned if the file has been modified otherwise it returns false.
 func fileHasBeenModified(originalModificationDate, modificationDate int64) bool {
 	if originalModificationDate != modificationDate {
 		return true
@@ -44,6 +46,7 @@ func fileHasBeenModified(originalModificationDate, modificationDate int64) bool 
 	return false
 }
 
+// executeCommandOnFileModification will execute the provided command whenever a file is modified.
 func executeCommandOnFileModification(cmd commands.CommandToExecute, files []fileToWatch) {
 	for i := range filesToWatch {
 		originalModificationDate := filesToWatch[i].modificationDate
@@ -56,6 +59,7 @@ func executeCommandOnFileModification(cmd commands.CommandToExecute, files []fil
 	}
 }
 
+// Watch is an infinite loop that executes 'executeCommandOnFileModification' function.
 func Watch(cmd commands.CommandToExecute) {
 	for {
 		executeCommandOnFileModification(cmd, filesToWatch)

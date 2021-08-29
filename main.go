@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	process.CatchSigTerm()
+	process.CatchSignalsAndExit()
 	flags.CheckFlags()
 
 	var patternsToGlob []string
@@ -55,8 +55,8 @@ func main() {
 		}
 	}
 
-	f := files.RemoveGlobDuplicates(filesToGlob)
-	ignoredFiles := files.RemoveGlobDuplicates(filesToIgnore)
+	f := files.RemoveDuplicatedFiles(filesToGlob)
+	ignoredFiles := files.RemoveDuplicatedFiles(filesToIgnore)
 	files.RemoveIgnoredFiles(&f, ignoredFiles)
 
 	fmt.Printf(colors.Yellow + "And now my watch begins. It shall not end until my death.\n\n" + colors.Reset)

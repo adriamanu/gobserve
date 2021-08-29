@@ -4,6 +4,8 @@ import (
 	"goverwatch/helpers"
 )
 
+// ShouldKeepFile check if the provided file exists in the array of files passed as parameter.
+// It returns true if the file doesn't exists yet in the array, otherwise it returns false.
 func ShouldKeepFile(fileToKeep string, existingFiles []string) bool {
 	for _, f := range existingFiles {
 		if f == fileToKeep {
@@ -13,6 +15,7 @@ func ShouldKeepFile(fileToKeep string, existingFiles []string) bool {
 	return true
 }
 
+// RemoveFileFromList remove the provided file from the array of files.
 func RemoveFileFromList(files *[]string, file string) {
 	for i, f := range *files {
 		if f == file {
@@ -22,7 +25,9 @@ func RemoveFileFromList(files *[]string, file string) {
 	return
 }
 
-func RemoveGlobDuplicates(f [][]string) []string {
+// Some files may match several patterns especially while using wildcard.
+// RemoveDuplicatedFiles remove duplicated files from the two dimensional array passed as parameter and returns the "clean" array of files.
+func RemoveDuplicatedFiles(f [][]string) []string {
 	var filesToKeep []string
 	if len(f) > 0 {
 		filesToKeep = f[0]
@@ -30,7 +35,6 @@ func RemoveGlobDuplicates(f [][]string) []string {
 		return filesToKeep
 	}
 
-	// don't keep duplicates - some files may match several patterns
 	for i := 1; i < len(f); i++ {
 		for j := 0; j < len(f[i]); j++ {
 			if ShouldKeepFile(f[i][j], filesToKeep) {
@@ -42,6 +46,7 @@ func RemoveGlobDuplicates(f [][]string) []string {
 	return filesToKeep
 }
 
+// RemoveIgnoredFiles removes ignored files from the array of files to keep.
 func RemoveIgnoredFiles(filesToKeep *[]string, filesToIgnore []string) {
 	for i := 0; i < len(filesToIgnore); i++ {
 		if !ShouldKeepFile(filesToIgnore[i], *filesToKeep) {

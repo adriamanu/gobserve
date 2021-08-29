@@ -41,7 +41,7 @@ func TestRemoveDuplicatedFiles(t *testing.T) {
 	someMoreFiles := GlobFiles(simplePattern)
 	allFiles = append(allFiles, files, someMoreFiles)
 
-	cleanedFilesList := RemoveGlobDuplicates(allFiles)
+	cleanedFilesList := RemoveDuplicatedFiles(allFiles)
 	// files is a superset of somemorefiles as it contains the same files + some from other directories
 	if len(cleanedFilesList) != len(files) {
 		t.Errorf("Some files haven't been ignored.")
