@@ -15,7 +15,10 @@ import (
 
 func main() {
 	process.CatchSignalsAndExit()
-	flags.CheckFlags()
+	err := flags.CheckFlags()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	var patternsToGlob []string
 	var patternsToIgnore []string
@@ -26,10 +29,12 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		conf, err := config.ParseConfigFile(absolutePath)
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		patternsToGlob = conf.Files
 		patternsToIgnore = conf.IgnoredFiles
 		command = conf.Command
@@ -41,17 +46,25 @@ func main() {
 
 	var filesToGlob [][]string
 	for i := range patternsToGlob {
-		p := patternsToGlob[i]
-		if p != "" {
-			filesToGlob = append(filesToGlob, files.GlobFiles(p))
+		pattern := patternsToGlob[i]
+		if pattern != "" {
+			f, err := files.GlobFiles(pattern)
+			if err != nil {
+				log.Fatal(err)
+			}
+			filesToGlob = append(filesToGlob, f)
 		}
 	}
 
 	var filesToIgnore [][]string
 	for j := range patternsToIgnore {
-		pi := patternsToIgnore[j]
-		if pi != "" {
-			filesToIgnore = append(filesToIgnore, files.GlobFiles((pi)))
+		ignoredPattern := patternsToIgnore[j]
+		if ignoredPattern != "" {
+			f, err := files.GlobFiles(ignoredPattern)
+			if err != nil {
+				log.Fatal(err)
+			}
+			filesToIgnore = append(filesToIgnore, f)
 		}
 	}
 

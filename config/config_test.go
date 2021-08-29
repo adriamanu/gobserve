@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"goverwatch/helpers"
 	"log"
 	"path/filepath"
@@ -46,6 +47,19 @@ func TestConfigurationParsing(t *testing.T) {
 
 		if !errors.Is(err, extensionErr) {
 			t.Errorf("should raise an error while retrieving an extension that is not yaml nor json")
+		}
+	})
+
+	t.Run("test errored json file", func(t *testing.T) {
+		absolutePath, err := filepath.Abs("./_samples/test-error.json")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		_, parseErr := ParseConfigFile(absolutePath)
+		fmt.Println("ParseError =", parseErr)
+		if parseErr == nil {
+			t.Error("should raise an error due to empty json file")
 		}
 	})
 }

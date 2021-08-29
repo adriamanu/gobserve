@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 
@@ -36,18 +35,18 @@ func getConfigFileExtension(fp string) (ext string, err error) {
 func ParseConfigFile(fp string) (conf Config, err error) {
 	ext, err := getConfigFileExtension(fp)
 	if err != nil {
-		log.Fatal(err)
+		return Config{}, err
 	}
 
 	configFile, err := os.Open(fp)
 	if err != nil {
-		log.Fatal(err)
+		return Config{}, err
 	}
 	defer configFile.Close()
 
 	fileContent, err := ioutil.ReadAll(configFile)
 	if err != nil {
-		log.Fatal(err)
+		return Config{}, err
 	}
 
 	if ext == ".json" {

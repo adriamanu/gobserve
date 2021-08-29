@@ -1,9 +1,9 @@
 package flags
 
 import (
+	"errors"
 	"flag"
 	"fmt"
-	"log"
 )
 
 const config string = "config"
@@ -17,7 +17,7 @@ var CommandFlag = flag.String(command, "", "command to execute")
 var IgnoreFlag = flag.String(ignore, "", "regex of files to ignore")
 
 // CheckFlags parse flags used with the cli and exit with an error message if a mandatory flag is missing.
-func CheckFlags() {
+func CheckFlags() error {
 	flag.Parse()
 
 	errMsg := "Flag %s is mandatory"
@@ -25,10 +25,10 @@ func CheckFlags() {
 	if *ConfigFlag == "" {
 		// if config flag is not used we use other flags
 		if *FilesFlag == "" {
-			log.Fatal(fmt.Errorf(errMsg, files))
+			return errors.New(fmt.Sprintf(errMsg, files))
 		}
 		if *CommandFlag == "" {
-			log.Fatal(fmt.Errorf(errMsg, command))
+			return errors.New(fmt.Sprintf(errMsg, files))
 		}
 	} else {
 		// if config flag is used we disable other flags
@@ -36,6 +36,7 @@ func CheckFlags() {
 		disableFlag(CommandFlag, command)
 		disableFlag(IgnoreFlag, ignore)
 	}
+	return nil
 }
 
 // disableFlag disable flag when the flag -config is passed to the program.

@@ -17,7 +17,7 @@ func isPatternAWildcard(pattern string) bool {
 
 // GlobFiles returns all the files that match a pattern.
 // * and ** patterns are handled.
-func GlobFiles(pattern string) []string {
+func GlobFiles(pattern string) ([]string, error) {
 	tokenizedPattern := strings.Split(pattern, "/")
 	patternLen := len(tokenizedPattern)
 
@@ -82,8 +82,10 @@ func GlobFiles(pattern string) []string {
 			}
 			return nil
 		})
+
 	if err != nil {
-		log.Fatal(err)
+		return []string{}, nil
 	}
-	return fp
+
+	return fp, nil
 }
