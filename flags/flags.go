@@ -9,7 +9,7 @@ import (
 const config string = "config"
 const files string = "files"
 const ignore string = "ignore"
-const command string = "c"
+const command string = "command"
 
 var ConfigFlag = flag.String(config, "", "configuration file in json or yaml format")
 var FilesFlag = flag.String(files, "", "files to watch")

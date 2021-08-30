@@ -1,23 +1,29 @@
 [![Actions Status](https://github.com/adriamanu/goverwatch/actions/workflows/test.yml/badge.svg)](https://github.com/adriamanu/goverwatch/actions)
 [![codecov](https://codecov.io/gh/adriamanu/goverwatch/master/graph/badge.svg)](https://codecov.io/gh/adriamanu/goverwatch)
 
-# Golang file watcher
+# Goverwatch
 
 ## What is Goverwatch
-It is useful in any development environment to have a hot-reloading system.<br>
-Govewatch is a file watcher that will lookup for modifications on a bunch of files and execute a command whenever a file is modified.<br>
+**Goverwatch** is a file watcher that will lookup for modifications on a bunch of files and execute a command whenever a file is modified.<br>
 Specify a **command** to execute and a list of files to watch on and you are ready to go.<br>
 
 ## Usage 
 | Supported flags |                                    Description                                    | Mandatory |
 | :-------------: | :-------------------------------------------------------------------------------: | :-------: |
 |      files      | files separated by spaces you want to look on <br> * && ** patterns are supported |    yes    |
-|        c        |                   command to execute wrapped with double quotes                   |    yes    |
+|     command     |                   command to execute wrapped with double quotes                   |    yes    |
 |     ignore      | files separated by spaces you want to ignore <br> * && ** patterns are supported  |    no     |
+|     config      |                 pass a configuration file in yaml or json format                  |    no     |
 
 Here is an example:
 ```bash
-goverwatch -files "**/**/**/**/**.go **/**/**/*.json *.go" -c "go build main.go" -ignore "_samples/b/b.json *.go""
+goverwatch -files "**/**/**.go **/**/**/*.json *.go" -command "go build main.go" -ignore "_samples/b/b.json *.go"
+goverwatch -config=config/_samples/test-config.json
+```
+
+## Download
+```bash
+curl -L -s https://github.com/adriamanu/goverwatch/releases/download/latest/goverwatch  --output goverwatch && chmod +x goverwatch
 ```
 
 ## Processes
@@ -33,9 +39,4 @@ cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 We can then kill every process in the group by passing a negative integer to the `Kill()` function.<br>
 ```go
 syscall.Kill(-runningProcess.Pid, syscall.SIGKILL)
-```
-
-## Download
-```bash
-curl -L -s https://github.com/adriamanu/goverwatch/releases/download/latest/goverwatch  --output goverwatch && chmod +x goverwatch
 ```
