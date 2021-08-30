@@ -1,16 +1,38 @@
 package files
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"testing"
 )
+
+func TestGlobalVariables(t *testing.T) {
+	t.Run("test global variables initialization", func(t *testing.T) {
+		pattern := "**/**.go"
+
+		initGlobalVariables(pattern)
+		if tokenizedPattern[0] != "**" && tokenizedPattern[1] != "**.go" {
+			log.Fatal("pattern **/**.go should result in an array with two elements [0] == ** and [1] == **.go")
+		}
+		if patternLen != 2 {
+			log.Fatal("pattern **/**.go should result in an array with a len of 2")
+		}
+		if len(fp) != 0 {
+			log.Fatal("fp array must be empty as he is filled in GlobFiles function")
+		}
+		if lookupPattern != ".go" {
+			log.Fatal("as last pattern contains two stars, we take every files that contains .go extension")
+		}
+	})
+}
 
 func TestSimplePatterns(t *testing.T) {
 	t.Run("*.go pattern", func(t *testing.T) {
 		// glob_test.go glob.go keep_or_remove_file_test.go keep_or_remove_file.go watcher.go watcher_test.go
 		pattern := "*.go"
 		files, err := GlobFiles(pattern)
+		fmt.Println("Files", files)
 		if err != nil {
 			log.Fatal(err)
 		}

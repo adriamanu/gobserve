@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"fmt"
 	"goverwatch/helpers"
 	"log"
 	"path/filepath"
@@ -57,7 +56,6 @@ func TestConfigurationParsing(t *testing.T) {
 		}
 
 		_, parseErr := ParseConfigFile(absolutePath)
-		fmt.Println("ParseError =", parseErr)
 		if parseErr == nil {
 			t.Error("should raise an error due to empty json file")
 		}
